@@ -9,13 +9,13 @@ const DEFAULT_MESS = [
   "听说要提前一个月吃素才能中大奖喔！",
   "好想要一等奖啊！！！",
   "一等奖有没有人想要呢？",
-  "五等奖也不错，只要自己能中奖就行",
+  "三等奖也不错，只要自己能中奖就行",
   "祝大家新年快乐！",
-  "中不中奖不重要，大家吃好喝好。",
+  "中不中奖不重要，大家开心就好。",
   "新年，祝福大家事事顺遂。",
   "作为专业陪跑的我，我就看看你们有谁跟我一样",
   "新的一年祝福大家越来越好！",
-  "来年再战！！！"
+  "来年再战！！！",
 ];
 
 let lastDanMuList = [];
@@ -26,7 +26,7 @@ class DanMu {
   constructor(option) {
     if (typeof option !== "object") {
       option = {
-        text: option
+        text: option,
       };
     }
 
@@ -54,7 +54,7 @@ class DanMu {
   start(text) {
     let speed = ~~(Math.random() * 10000) + 6000;
     this.position = {
-      x: MAX_WIDTH
+      x: MAX_WIDTH,
     };
     let delay = speed / 10;
 
@@ -65,7 +65,7 @@ class DanMu {
     this.tween = new TWEEN.Tween(this.position)
       .to(
         {
-          x: -this.width
+          x: -this.width,
         },
         speed
       )
@@ -87,7 +87,7 @@ class Qipao {
   constructor(option) {
     if (typeof option !== "object") {
       option = {
-        text: option
+        text: option,
       };
     }
 
@@ -139,7 +139,7 @@ let addQipao = (() => {
       qipao = new Qipao({
         onComplete() {
           qipaoList.push(qipao);
-        }
+        },
       });
     }
 
@@ -156,10 +156,10 @@ function setPrizes(pri) {
 function showPrizeList(currentPrizeIndex) {
   let currentPrize = prizes[currentPrizeIndex];
   if (currentPrize.type === defaultType) {
-    currentPrize.count === "不限制";
+    currentPrize.count === "无限";
   }
-  let htmlCode = `<div class="prize-mess">正在抽取<label id="prizeType" class="prize-shine">${currentPrize.text}</label><label id="prizeText" class="prize-shine">${currentPrize.title}</label>，剩余<label id="prizeLeft" class="prize-shine">${currentPrize.count}</label>个</div><ul class="prize-list">`;
-  prizes.forEach(item => {
+  let htmlCode = `<div id="messageBar" class="prize-mess">正在抽取<label id="prizeType" class="prize-shine">${currentPrize.text}</label><label id="prizeText" class="prize-shine">${currentPrize.title}</label>，剩余<label id="prizeLeft" class="prize-shine">${currentPrize.count}</label>份</div><ul class="prize-list">`;
+  prizes.forEach((item) => {
     if (item.type === defaultType) {
       return true;
     }
@@ -212,7 +212,7 @@ let setPrizeData = (function () {
       elements = {
         box: document.querySelector(`#prize-item-${type}`),
         bar: document.querySelector(`#prize-bar-${type}`),
-        text: document.querySelector(`#prize-count-${type}`)
+        text: document.querySelector(`#prize-count-${type}`),
       };
       prizeElement[type] = elements;
     }
@@ -247,9 +247,11 @@ let setPrizeData = (function () {
     }
 
     if (currentPrizeIndex === 0) {
+      document.getElementById("messageBar").innerHTML =
+        '<label id="prizeType" class="prize-shine">抽奖结束</label>';
       prizeElement.prizeType.textContent = "特别奖";
       prizeElement.prizeText.textContent = " ";
-      prizeElement.prizeLeft.textContent = "不限制";
+      prizeElement.prizeLeft.textContent = "无限";
       return;
     }
 
@@ -271,7 +273,7 @@ function startMaoPao() {
 
   function restart() {
     total = 0;
-    danmuList.forEach(item => {
+    danmuList.forEach((item) => {
       let text =
         lastDanMuList.length > 0
           ? lastDanMuList.shift()
@@ -291,7 +293,7 @@ function startMaoPao() {
               this.start(DEFAULT_MESS[index++]);
               index = index > len ? 0 : index;
             }, 1000);
-          }
+          },
         })
       );
       index = index > len ? 0 : index;
@@ -310,5 +312,5 @@ export {
   addDanMu,
   setPrizes,
   resetPrize,
-  addQipao
+  addQipao,
 };

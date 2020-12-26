@@ -11,7 +11,7 @@ const {
   writeXML,
   saveDataFile,
   shuffle,
-  saveErrorDataFile
+  saveErrorDataFile,
 } = require("./help");
 
 let app = express(),
@@ -28,13 +28,13 @@ let app = express(),
 //这里指定参数使用 json 格式
 app.use(
   bodyParser.json({
-    limit: "1mb"
+    limit: "1mb",
   })
 );
 
 app.use(
   bodyParser.urlencoded({
-    extended: true
+    extended: true,
   })
 );
 
@@ -50,7 +50,7 @@ app.get("/", (req, res) => {
 });
 
 //设置跨域访问
-app.all("*", function(req, res, next) {
+app.all("*", function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "X-Requested-With");
   res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS");
@@ -70,7 +70,7 @@ router.post("/getTempData", (req, res, next) => {
   res.json({
     cfgData: cfg,
     leftUsers: curData.leftUsers,
-    luckyData: luckyData
+    luckyData: luckyData,
   });
 });
 
@@ -80,9 +80,9 @@ router.post("/reset", (req, res, next) => {
   errorData = [];
   log(`重置数据成功`);
   saveErrorDataFile(errorData);
-  return saveDataFile(luckyData).then(data => {
+  return saveDataFile(luckyData).then((data) => {
     res.json({
-      type: "success"
+      type: "success",
     });
   });
 });
@@ -103,15 +103,15 @@ router.post("/getPrizes", (req, res, next) => {
 router.post("/saveData", (req, res, next) => {
   let data = req.body;
   setLucky(data.type, data.data)
-    .then(t => {
+    .then((t) => {
       res.json({
-        type: "设置成功！"
+        type: "设置成功！",
       });
       log(`保存奖品数据成功`);
     })
-    .catch(data => {
+    .catch((data) => {
       res.json({
-        type: "设置失败！"
+        type: "设置失败！",
       });
       log(`保存奖品数据失败`);
     });
@@ -121,15 +121,15 @@ router.post("/saveData", (req, res, next) => {
 router.post("/errorData", (req, res, next) => {
   let data = req.body;
   setErrorData(data.data)
-    .then(t => {
+    .then((t) => {
       res.json({
-        type: "设置成功！"
+        type: "设置成功！",
       });
       log(`保存没来人员数据成功`);
     })
-    .catch(data => {
+    .catch((data) => {
       res.json({
-        type: "设置失败！"
+        type: "设置失败！",
       });
       log(`保存没来人员数据失败`);
     });
@@ -138,25 +138,25 @@ router.post("/errorData", (req, res, next) => {
 // 保存数据到excel中去
 router.post("/export", (req, res, next) => {
   let type = [1, 2, 3, 4, 5, defaultType],
-    outData = [["工号", "姓名", "部门"]];
-  cfg.prizes.forEach(item => {
+    outData = [["年级", "姓名", "班级"]];
+  cfg.prizes.forEach((item) => {
     outData.push([item.text]);
     outData = outData.concat(luckyData[item.type] || []);
   });
 
   writeXML(outData, "/抽奖结果.xlsx")
-    .then(dt => {
+    .then((dt) => {
       // res.download('/抽奖结果.xlsx');
       res.status(200).json({
         type: "success",
-        url: "抽奖结果.xlsx"
+        url: "抽奖结果.xlsx",
       });
       log(`导出数据成功！`);
     })
-    .catch(err => {
+    .catch((err) => {
       res.json({
         type: "error",
-        error: err.error
+        error: err.error,
       });
       log(`导出数据失败！`);
     });
@@ -174,7 +174,7 @@ router.all("*", (req, res) => {
     }
   } else if (req.method.toLowerCase() === "post") {
     let postBackData = {
-      error: "empty"
+      error: "empty",
     };
     res.send(JSON.stringify(postBackData));
   }
@@ -214,11 +214,11 @@ function loadData() {
 
   // 读取已经抽取的结果
   loadTempData()
-    .then(data => {
+    .then((data) => {
       luckyData = data[0];
       errorData = data[1];
     })
-    .catch(data => {
+    .catch((data) => {
       curData.leftUsers = Object.assign([], curData.users);
     });
 }
@@ -228,17 +228,17 @@ function getLeftUsers() {
   let lotteredUser = {};
   for (let key in luckyData) {
     let luckys = luckyData[key];
-    luckys.forEach(item => {
+    luckys.forEach((item) => {
       lotteredUser[item[0]] = true;
     });
   }
   // 记录当前已抽取但是不在线人员
-  errorData.forEach(item => {
+  errorData.forEach((item) => {
     lotteredUser[item[0]] = true;
   });
 
   let leftUsers = Object.assign([], curData.users);
-  leftUsers = leftUsers.filter(user => {
+  leftUsers = leftUsers.filter((user) => {
     return !lotteredUser[user[0]];
   });
   curData.leftUsers = leftUsers;
@@ -247,7 +247,7 @@ function getLeftUsers() {
 loadData();
 
 module.exports = {
-  run: function(devPort, noOpen) {
+  run: function (devPort, noOpen) {
     let openBrowser = true;
     if (process.argv.length > 3) {
       if (process.argv[3] && (process.argv[3] + "").toLowerCase() === "n") {
@@ -269,5 +269,5 @@ module.exports = {
       global.console.log(`lottery server listenig at http://${host}:${port}`);
       openBrowser && opn(`http://127.0.0.1:${port}`);
     });
-  }
+  },
 };
