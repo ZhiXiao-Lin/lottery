@@ -726,8 +726,8 @@ function changeCard(cardIndex, user) {
   let card = threeDCards[cardIndex].element;
 
   card.innerHTML = `<div class="name">${user[1]}</div><div class="details">${
-    user[0]
-  }<br/>${user[2] || "PSST"}</div>`;
+    user[0] + user[2]
+  }</div>`;
 }
 
 /**
